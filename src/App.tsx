@@ -1,3 +1,5 @@
-const App = () => <div />;
+import Map from './page/Map/Map'
 
-export default App;
+const App = () => <Map />
+
+export default App

@@ -1,31 +1,88 @@
 import {
-  MapContainer, TileLayer, Marker, Popup,
-} from 'react-leaflet'
+  useEffect, useMemo, useState,
+} from 'react'
+import {
+  MapContainer, TileLayer,
 
-const Map = () => (
-  <div
-    style={{
-      width: 300,
-      height: 300,
-    }}
-    id="map"
-  >
-    <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
-      <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <Marker position={[51.505, -0.09]}>
-        <Popup>
-          A pretty CSS3 popup.
-          {' '}
-          <br />
-          {' '}
-          Easily customizable.
-        </Popup>
-      </Marker>
-    </MapContainer>
-  </div>
-)
+} from 'react-leaflet'
+import styled from 'styled-components'
+import FeatureItem from '../../components/FeatureItem'
+import { Feature } from '../../interfaces'
+import { getMapViewService } from '../../services/mapview'
+
+const Container = styled.div`
+  position: relative;
+`
+
+const Button = styled.button`
+  border: none;
+  border-radius: 8px;
+  
+  color: black;
+  background-color: turquoise;
+
+  padding: 15px 25px;
+  
+  position: absolute;
+  z-index: 999;
+  right: 5px;
+  top: 5px;
+
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`
+
+const defaultColor = '#000fff'
+
+const Map = () => {
+  const [originalFeaturesList, setOriginalFeaturesList] = useState<Feature[]>([])
+  const [isShowingDefaultColor, setIsShowingDefaultColor] = useState(true)
+
+  const features = useMemo(() => {
+    if (isShowingDefaultColor) {
+      const remapToDefaultColor = (feature: Feature) => ({
+        ...feature,
+        properties: { ...feature.properties, color: defaultColor },
+      })
+
+      return originalFeaturesList.map(remapToDefaultColor)
+    }
+
+    return originalFeaturesList
+  }, [originalFeaturesList, isShowingDefaultColor])
+
+  useEffect(() => {
+    const getMapData = async () => {
+      const data = await getMapViewService()
+      if (!data) return
+      setOriginalFeaturesList(data.slice(0, 50))
+    }
+    getMapData()
+  }, [])
+
+  const onClickSwitchColor = () => {
+    setIsShowingDefaultColor(!isShowingDefaultColor)
+  }
+
+  return (
+    <Container>
+      <Button onClick={onClickSwitchColor}>Toggle Color </Button>
+      <MapContainer center={[8.5361854, 12.0036249]} zoom={15}>
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+
+        {features.map((item) => (
+          <FeatureItem key={item.properties.uuid} item={item} />
+        ))}
+
+      </MapContainer>
+    </Container>
+  )
+}
 
 export default Map

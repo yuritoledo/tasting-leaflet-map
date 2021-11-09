@@ -3,39 +3,13 @@ import {
 } from 'react'
 import {
   MapContainer, TileLayer,
-
 } from 'react-leaflet'
-import styled from 'styled-components'
+import Button from '../../components/Button'
 import FeatureItem from '../../components/FeatureItem'
 import { Feature } from '../../interfaces'
 import { getMapViewService } from '../../services/mapview'
-
-const Container = styled.div`
-  position: relative;
-`
-
-const Button = styled.button`
-  border: none;
-  border-radius: 8px;
-  
-  color: black;
-  background-color: turquoise;
-
-  padding: 15px 25px;
-  
-  position: absolute;
-  z-index: 999;
-  right: 5px;
-  top: 5px;
-
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.7;
-  }
-`
-
-const defaultColor = '#000fff'
+import { defaultColor } from '../../styles/colors'
+import Container from '../../components/Container'
 
 const Map = () => {
   const [originalFeaturesList, setOriginalFeaturesList] = useState<Feature[]>([])

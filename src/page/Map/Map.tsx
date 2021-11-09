@@ -41,9 +41,11 @@ const Map = () => {
     setIsShowingDefaultColor(!isShowingDefaultColor)
   }
 
+  const buttonTitle = isShowingDefaultColor ? 'Default color' : 'Original color'
+
   return (
     <Container>
-      <Button onClick={onClickSwitchColor}>Toggle Color </Button>
+      <Button onClick={onClickSwitchColor}>{buttonTitle}</Button>
       <MapContainer center={[8.5361854, 12.0036249]} zoom={15}>
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
